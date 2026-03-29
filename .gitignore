@@ -1,0 +1,6 @@
+agenv/
+__pycache__/
+.env
+research_agent/
+uploads/
+guides/
