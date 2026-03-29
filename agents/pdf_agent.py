@@ -7,7 +7,7 @@ from langchain_core.messages import HumanMessage
 import os
 from agents.web_search import get_next
 
-llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.1-8b-instant")
+llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.3-70b-versatile")
 
 # embeddings only loaded when first PDF is added — not at import
 _embeddings = None
@@ -52,7 +52,7 @@ def pdf_node(state: dict) -> dict:
 
     retriever = vector_store.as_retriever(
         search_type="similarity",
-        search_kwargs={"k": 5}
+        search_kwargs={"k": 10}
     )
     docs = retriever.invoke(query)
 
@@ -68,22 +68,22 @@ def pdf_node(state: dict) -> dict:
         for doc in docs
     ])
 
-    summary_prompt = f"""You are a document analysis expert. Based on these excerpts from 
-user-uploaded documents, answer this query: "{query}"
+    summary_prompt = f"""You are a meticulous document analyst. Thoroughly answer this query using ONLY the provided document excerpts: "{query}"
 
 Document Excerpts:
 {context}
 
 Instructions:
-- Answer directly from the document content — do not add outside knowledge
-- Always cite the specific document name and page number for each finding
-- If the query asks for a summary, cover all major themes in the document
-- If the query asks a specific question, focus only on relevant sections
-- Note any gaps — if the documents don't fully address the query, say so
-- Preserve technical terminology exactly as written in the documents
-- Format findings clearly with document references after each point
+- Answer exhaustively — extract every piece of relevant information from the excerpts
+- Cite every claim with (document name, page X) — never make a claim without a citation
+- If summarizing: identify all major themes, arguments, methodologies, results, and conclusions
+- If answering a question: pull every relevant passage, even partially related ones
+- Preserve exact technical terms, numbers, model names, and formulas as written
+- Note explicitly if the documents partially address the query or have gaps
+- Do NOT add any outside knowledge — only what is in the excerpts
+- Structure your response with clear headings for each theme or section
 
-Provide a thorough, well-cited document analysis."""
+Produce a comprehensive, fully-cited analysis."""
 
     summary = llm.invoke([HumanMessage(content=summary_prompt)])
 

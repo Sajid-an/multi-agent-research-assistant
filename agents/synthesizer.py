@@ -3,7 +3,7 @@ from langchain_core.messages import HumanMessage
 import os
 from datetime import datetime
 
-llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.1-8b-instant")
+llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.3-70b-versatile")
 
 def synthesizer_node(state: dict) -> dict:
     query = state["query"]
@@ -27,22 +27,22 @@ def synthesizer_node(state: dict) -> dict:
     if fact_check and "fact_check" in planned:
         sections += f"\n=== Fact-Check Assessment ===\n{fact_check}\n"
 
-    synthesis_prompt = f"""You are a senior research analyst writing a professional research report.
-Synthesize the following findings into a comprehensive, well-structured report.
+    synthesis_prompt = f"""You are a principal research analyst writing a deep, authoritative research report.
+Synthesize all findings below into a comprehensive, expert-level report.
 
 Research Query: "{query}"
 
 {sections}
 
 Report requirements:
-- Write for an intelligent, informed audience
-- Lead with the most important and surprising findings
-- Integrate findings across sources — don't just summarize each source separately
-- Highlight agreements AND contradictions between sources
-- Use specific numbers, names, and dates — avoid vague generalities
-- Flag anything that is speculative or unverified
-- Keep each section focused and concise — cut filler
-- Do not repeat the same point in multiple sections
+- Write for a technically sophisticated audience — do not simplify or hedge unnecessarily
+- Lead with the single most important, surprising, or counterintuitive finding
+- Deeply integrate findings across sources — draw connections, surface tensions, build a narrative
+- Every claim must be backed by a specific number, name, date, or citation from the findings
+- Explicitly name where sources agree (consensus) and where they conflict (open questions)
+- Flag speculative claims and explain why they are uncertain
+- Each section must add new information — zero repetition across sections
+- Use precise technical language; define terms only if genuinely ambiguous
 
 Structure:
 # {query}

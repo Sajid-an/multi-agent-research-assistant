@@ -4,7 +4,7 @@ from langchain_core.messages import HumanMessage
 import os
 
 client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
-llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.1-8b-instant")
+llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.3-70b-versatile")
 
 
 def get_next(state: dict, current: str, fallback: str) -> str:
@@ -20,11 +20,11 @@ def web_search_node(state: dict) -> dict:
     query = state["query"]
     print(f"[Web Search Agent] Searching for: {query}")
 
-    # search the web — max 5 results, full content not just snippets
+    # search the web — 8 results for broader coverage
     response = client.search(
         query=query,
         search_depth="advanced",
-        max_results=5,
+        max_results=8,
         include_raw_content=False,
         include_answer=True
     )
@@ -37,22 +37,22 @@ def web_search_node(state: dict) -> dict:
         for r in results
     ])
 
-    # use LLM to summarize findings relevant to the query
-    summary_prompt = f"""You are an expert research analyst. Analyze these web search results 
-and extract the most relevant, accurate, and recent information for this query: "{query}"
+    summary_prompt = f"""You are a senior research analyst conducting deep investigative research.
+Analyze these web search results thoroughly for the query: "{query}"
 
 Search Results:
 {raw_content}
 
 Instructions:
-- Focus on the most recent and credible sources
-- Extract specific facts, numbers, dates, and named entities
-- Ignore promotional or marketing content
-- Flag any conflicting information between sources
-- Organize findings by theme, not by source
-- Be concise — no filler phrases like "according to the search results"
+- Extract ALL specific facts: numbers, statistics, dates, names, versions, prices, percentages
+- Cover multiple angles — technical details, real-world implications, expert opinions, criticisms
+- Identify and explicitly flag any contradictions or disagreements between sources
+- Note the credibility and recency of each source; prefer primary sources over aggregators
+- Organize findings thematically — do NOT summarize source by source
+- Include direct quotes where they add precision
+- Do NOT use filler phrases; every sentence must carry information
 
-Provide a dense, information-rich summary."""
+Produce a comprehensive, deeply detailed research summary with no information left out."""
 
     summary = llm.invoke([HumanMessage(content=summary_prompt)])
 

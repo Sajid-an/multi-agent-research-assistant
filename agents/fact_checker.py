@@ -4,7 +4,7 @@ from tavily import TavilyClient
 import os
 from agents.web_search import get_next
 
-llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.1-8b-instant")
+llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.3-70b-versatile")
 client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 def fact_check_node(state: dict) -> dict:

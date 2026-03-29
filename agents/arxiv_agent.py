@@ -5,7 +5,7 @@ from langchain_core.messages import HumanMessage
 from agents.web_search import get_next
 import os
 
-llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.1-8b-instant")
+llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.3-70b-versatile")
 
 def arxiv_node(state: dict) -> dict:
     query = state["query"]
@@ -15,13 +15,13 @@ def arxiv_node(state: dict) -> dict:
         time.sleep(3)  # respect ArXiv rate limit
 
         client = arxiv.Client(
-            page_size=5,
-            delay_seconds=3,  # built-in delay between requests
+            page_size=8,
+            delay_seconds=3,
             num_retries=2
         )
         search = arxiv.Search(
             query=query,
-            max_results=5,  # keep this low
+            max_results=8,
             sort_by=arxiv.SortCriterion.Relevance
         )
         papers = list(client.results(search))
@@ -42,22 +42,23 @@ def arxiv_node(state: dict) -> dict:
             for p in papers
         ])
 
-        summary_prompt = f"""You are an expert academic researcher. Analyze these ArXiv papers 
-and extract the most relevant academic findings for this query: "{query}"
+        summary_prompt = f"""You are a principal research scientist conducting a rigorous literature review.
+Deeply analyze these ArXiv papers for the query: "{query}"
 
 Papers:
 {raw_content}
 
 Instructions:
-- Focus on methodology, results, and benchmarks
-- Extract specific metrics, dataset names, and model architectures
-- Note publication dates — prefer recent papers (2023-2026)
-- Identify consensus findings vs contradictory results
-- Highlight breakthrough results or state-of-the-art claims
-- Cite paper titles and authors for specific findings
-- Be technical and precise
+- For each paper, extract: core contribution, methodology, datasets used, key results with exact numbers, limitations
+- Compare methodologies across papers — what approaches are dominant vs emerging?
+- Identify where papers agree (consensus) and where they conflict (open problems)
+- Note the trajectory: how has the field evolved across the publication dates?
+- Highlight SOTA claims and the specific benchmarks/metrics behind them
+- Flag any papers that directly contradict each other and explain the discrepancy
+- Cite every specific claim with (Author et al., YYYY) format
+- Be technically precise — include architecture names, hyperparameters, dataset splits where mentioned
 
-Provide a structured academic summary."""
+Produce an in-depth academic literature synthesis, not a surface-level summary."""
 
         summary = llm.invoke([HumanMessage(content=summary_prompt)])
         sources = [p.entry_id for p in papers]
