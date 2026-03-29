@@ -92,8 +92,8 @@ MULTI AGENTS/
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/research-agent
-cd research-agent
+git clone https://github.com/YOUR_USERNAME/multi-agent-research-assistant
+cd multi-agent-research-assistant
 ```
 
 ### 2. Create virtual environment
@@ -148,7 +148,7 @@ Open `http://localhost:8501`
 
 ## Live Demo
 
-[Try it on HuggingFace Spaces](#)
+[https://sanji02-research-agent.hf.space](#)
 
 ---
 
