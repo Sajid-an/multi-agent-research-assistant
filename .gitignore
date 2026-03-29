@@ -1,4 +1,8 @@
 # Byte-compiled / optimized / DLL files
+research_agent/
+guides/
+uploads/
+agenv/
 __pycache__/
 *.py[codz]
 *$py.class
