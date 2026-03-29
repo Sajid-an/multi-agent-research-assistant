@@ -148,7 +148,7 @@ Open `http://localhost:8501`
 
 ## Live Demo
 
-[https://sanji02-research-agent.hf.space](live demo)
+[Live demo](https://sanji02-research-agent.hf.space)
 
 ---
 
